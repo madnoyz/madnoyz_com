@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block sub_content %}
+    <h1>Employees</h1>
+    <table border="1">
+        {% for employee in employees %}
+            <tr>
+                <td>{{ employee.name }}</td>
+                <td>{{ employee.age }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

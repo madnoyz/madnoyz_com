@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block sub_content %}
+    <form method="POST">
+        Name: <input type="password" name="name" /><br />
+        Age : <input type="text" name="age" /><br />
+        <input type="submit" />
+    </form>
+    <h1>{{ session['username'] }}</h1>
+{% endblock %}
