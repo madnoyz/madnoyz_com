@@ -1,2 +1,3 @@
 # madnoyz_com
-Website for CP
+Main Website for CP
+Python / Flask Project
