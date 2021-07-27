@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, session, flash
-from flask_mysqldb import MySQL
+import os
+from flask import Flask, render_template, flash, session, request, redirect
 from flask_bootstrap import Bootstrap
+from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 import yaml
-import os
+
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -19,34 +20,58 @@ mysql = MySQL(app)
 
 app.config['SECRET_KEY'] = os.urandom(24)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    if request.method == 'POST':
-        try:
-            form = request.form
-            name = form['name']
-            age = form['age']
-            cur = mysql.connection.cursor()
-            name = generate_password_hash(name)
-            cur.execute("INSERT INTO employee(name, age) VALUES(%s, %s)", (name, age))
-            mysql.connection.commit()
-            flash('Successfully inserted data', 'success')
-        except:
-            flash('Failed to insert data', 'danger')
     return render_template('index.html')
-
-@app.route('/employees')
-def employees():
-    cur = mysql.connection.cursor()
-    result_value = cur.execute("SELECT * from employee")
-    if result_value > 0:
-        all_employees = cur.fetchall()
-        return str(check_password_hash(all_employees[3]['name'], 'sunday'))
-        #return render_template('employees.html', employees=all_employees)
 
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+@app.route('/blogs/<int:id>/')
+def blogs(id):
+    return render_template('blogs.html', blog_id=id)
+
+@app.route('/register', methods=['GET','POST'])
+def register():
+    if request.method == 'POST':
+        userDetails = request.form
+        if(userDetails['password']) != userDetails['confirm_password']:
+            flash("Passwords do not match! Try again.", 'danger')
+            return render_template('register.html')
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO user(first_name, last_name, username, email, password)"
+                    "VALUES(%s,%s,%s,%s,%s)", (userDetails['first_name'], userDetails['last_name'],
+                    userDetails['username'], userDetails['email'], generate_password_hash(userDetails['password'])))
+        mysql.connection.commit()
+        cur.close()
+        flash('Registration successful! Please login.', 'success')
+        return redirect('/login')
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET','POST'])
+def login():
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    return render_template('logout.html')
+
+@app.route('/my-blogs')
+def my_blogs():
+    return render_template('my-blogs.html')
+
+@app.route('/write-blog/', methods=['GET','POST'])
+def write_blog():
+    return render_template('write-blog.html')
+
+@app.route('/edit-blog/<int:id>/', methods=['GET', 'POST'])
+def edit_blog():
+    return render_template('edit-blog.html', blog_id=id)
+
+@app.route('/delete-blog/<int:id>/', methods=['POST'])
+def delete_blog():
+    return 'success'
 
 if __name__ == '__main__':
     app.run()
