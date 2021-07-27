@@ -1,2 +1,5 @@
 # madnoyz_com
-Website for CP
+Main Website for CP\
+Python / Flask Project\
+\
+Project created to demonstrate python skillset and learn flask. 
