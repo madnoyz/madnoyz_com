@@ -51,6 +51,28 @@ def register():
 
 @app.route('/login', methods=['GET','POST'])
 def login():
+    if request.method == 'POST':
+        userDetails = request.form
+        username = userDetails['username']
+        cur = mysql.connection.cursor()
+        resultValue = cur.execute("SELECT * FROM user WHERE username = %s", ([username]))
+        if resultValue > 0:
+            user = cur.fetchone()
+            if check_password_hash(user['password'], userDetails['password']):
+                session['login'] = True
+                session['firstName'] = user['first_name']
+                session['lastName'] = user['last_name']
+                flash("Welcome " + session['firstName'] + '! You have successfully logged in.', 'success')
+            else:
+                cur.close()
+                flash("Password does not match.", 'danger')
+                return render_template('login.html')
+        else:
+            cur.close()
+            flash('User not found', 'danger')
+            return render_template('login.html')
+        cur.close()
+        return redirect('/')
     return render_template('login.html')
 
 @app.route('/logout')
