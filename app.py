@@ -85,6 +85,17 @@ def my_blogs():
 
 @app.route('/write-blog/', methods=['GET','POST'])
 def write_blog():
+    if request.method == 'POST':
+        blogpost = request.form
+        title = blogpost['title']
+        body = blogpost['body']
+        author = session['firstName'] + ' ' + session['lastName']
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO blog(title, body, author) VALUES(%s, %s, %s)", (title, body, author))
+        mysql.connection.commit()
+        cur.close()
+        flash("Successfully posted new blog", 'success')
+        return redirect('/')
     return render_template('write-blog.html')
 
 @app.route('/edit-blog/<int:id>/', methods=['GET', 'POST'])
