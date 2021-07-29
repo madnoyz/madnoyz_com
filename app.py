@@ -22,7 +22,14 @@ app.config['SECRET_KEY'] = os.urandom(24)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    cur = mysql.connection.cursor()
+    resultValue = cur.execute("SELECT * from blog")
+    if resultValue > 0:
+        blogs = cur.fetchall()
+        cur.close()
+        return render_template('index.html', blogs=blogs)
+    cur.close()
+    return render_template('index.html', blogs=None)
 
 @app.route('/about')
 def about():
@@ -30,7 +37,12 @@ def about():
 
 @app.route('/blogs/<int:id>/')
 def blogs(id):
-    return render_template('blogs.html', blog_id=id)
+    cur = mysql.connection.cursor()
+    resultValue = cur.execute("SELECT * FROM blog WHERE blog_id={}".format(id))
+    if resultValue > 0:
+        blog = cur.fetchone()
+        return render_template('blogs.html', blog=blog)
+    return 'Blog not found'
 
 @app.route('/register', methods=['GET','POST'])
 def register():
