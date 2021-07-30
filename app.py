@@ -91,11 +91,20 @@ def login():
 
 @app.route('/logout')
 def logout():
-    return render_template('logout.html')
+    session.clear()
+    flash("You have been logged out.", 'info')
+    return redirect('/')
 
 @app.route('/my-blogs')
 def my_blogs():
-    return render_template('my-blogs.html')
+    cur = mysql.connection.cursor()
+    resultValue = cur.execute("SELECT * from blog")
+    if resultValue > 0:
+        blogs = cur.fetchall()
+        cur.close()
+        return render_template('index.html', blogs=blogs)
+    cur.close()
+    return render_template('my-blogs.html', blogs=None)
 
 @app.route('/write-blog/', methods=['GET','POST'])
 def write_blog():
