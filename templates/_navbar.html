@@ -6,12 +6,14 @@
         <ul class="nav navbar-nav">
             <li class="active"><a href="/">Home</a></li>
             {% if session.login %}
-                <li><a href="/write-blogs">Write</a></li>
-                <li><a href="/edit-blogs">Edit</a></li>
+                <li><a href="/my-blogs">View</a></li>
+                <li><a href="/write-blog">Write</a></li>
             {% else %}
                 <li><a href="/my-blogs">Blog</a></li>
             {% endif %}
             <li><a href="/about">Hire Me</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
             {% if session.login %}
                 <li>Logged in as {{ session['firstName'] }} {{ session['lastName'] }}</li>
                 <li><a href="/logout">LOGOUT</a></li>
