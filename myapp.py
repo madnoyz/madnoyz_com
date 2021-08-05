@@ -1,11 +1,14 @@
 import os
+import yaml
+import glob
 from flask import Flask, render_template, flash, session, request, redirect
 from flask_bootstrap import Bootstrap
 from flask_mysqldb import MySQL
 from flask_ckeditor import CKEditor
+from flask_table import Table, Col
 from werkzeug.security import generate_password_hash, check_password_hash
-import yaml
-
+from qrcode_project import create_qr, read_qr
+from get_image import get_image
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -21,6 +24,9 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
 app.config['SECRET_KEY'] = os.urandom(24)
+
+QRCODE_FOLDER = os.path.join('static', 'qrcodes')
+app.config['UPLOAD_FOLDER'] = QRCODE_FOLDER
 
 @app.route('/')
 def index():
@@ -40,6 +46,48 @@ def about():
 @app.route('/projects')
 def projects():
     return render_template('projects.html')
+
+@app.route('/qr-code-project', methods=['GET', 'POST'])
+def qr_code_project():
+    if request.method == 'POST':
+        requestDelete = request.form
+        os.remove(os.path.join('static/qrcodes/',requestDelete['delete']))
+    image_files = get_image(QRCODE_FOLDER)
+    print(image_files)
+    return render_template('qr-code-project.html', qr_images=image_files)
+
+@app.route('/generate-qr', methods=['GET','POST'])
+def generate_qr():
+    if request.method == 'POST':
+        userDetails = request.form
+        qrcode_image = create_qr(str(userDetails['order_number']))
+        address = "static/qrcodes/" + str(userDetails['order_number']) + ".png"
+        qrcode_image.save(address)
+        qr_image = "qrcodes/" + str(userDetails['order_number']) + ".png"
+        flash("Successfully generated QRCode!", 'success')
+        return render_template('generate-qr.html', qrcode_image=qr_image)
+    return render_template('generate-qr.html', qrcode_image=None)
+
+@app.route('/read-qr', methods=['GET','POST'])
+def read_qr():
+    if request.method == 'POST':
+        flash("Successfully generated QRCode!", 'success')
+    return render_template('read-qr.html')
+
+@app.route('/view-qr/<int:id>')
+def view_qr(id):
+    cur = mysql.connection.cursor()
+    results = cur.execute("SELECT orders.itemNumber, items.itemName, items.itemDescription, orders.quantity FROM madnoyz.orders as orders INNER JOIN madnoyz.items as items ON items.itemId = orders.itemNumber WHERE orders.poNumber = %s", ([id]))
+    if results > 0:
+        results = cur.fetchall()
+        items = ItemTable(results)
+        return render_template('view-qr.html', Items=results)
+    else:
+        return render_template('view-qr.html', Items=None)
+
+@app.route('/db')
+def qr_database():
+    return render_template('qr-database.html')
 
 @app.route('/blogs/<int:id>/')
 def blogs(id):
@@ -165,3 +213,4 @@ def delete_blog(id):
 
 if __name__ == '__main__':
     app.run()
+

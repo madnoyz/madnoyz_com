@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}
+    QR Code Generator
+{% endblock %}
+{% block sub_content %}
+<div class="col-lg-offset-2 bp3-card">
+    <div>
+        <h3><a href="\generate-qr">Generate QR</a></h3>
+    </div>
+    <div>
+        <h3><a href="\read-qr">QR Scanner</a></h3>
+    </div>
+    <div>
+        <h3><a href="\db">View Database</a></h3>
+    </div>
+    <div class="container">
+        {% for images in qr_images %}
+            <div class="card text-center" style="width: 18rem;">
+                    <img class="card-img-top" src="{{ url_for('static', filename='qrcodes/'+ images|string) }}" />
+                    <div class="card-body">
+                        <form action="" method="post">
+                            <button name="delete" value={{ images }} )>Delete</button>
+                        </form>
+                    </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

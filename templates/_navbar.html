@@ -3,7 +3,7 @@
         <div class="navbar-header">
             <a class="navbar-brand" href="/">CPabro</a>
         </div>
-        <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav center-nav">
             <li class="active"><a href="/">Home</a></li>
             {% if session.login %}
                 <li><a href="/my-blogs">View</a></li>
@@ -11,6 +11,7 @@
             {% else %}
                 <li><a href="/my-blogs">Blog</a></li>
             {% endif %}
+            <li><a href="/projects">Projects</a></li>
             <li><a href="/about">Hire Me</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">

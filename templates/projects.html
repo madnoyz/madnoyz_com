@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Madnoyz
+<!--<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">-->
+{% endblock %}
+{% block sub_content %}
+<div class="container">
+    <div class="card" style="width: 36rem;">
+        <img src=".{{ url_for('static', filename='staysimple.jpg') }}.." class="card-img-top" width="90%" heigth="90%" alt="...">
+        <div class="card-body">
+        <h3 class="card-title">QR Code Project</h3>
+            <p class="card-text">This project generates and reads a qr code to display data from a database.</p>
+            <a href="/qr-code-project" class="btn btn-primary">Go to project</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

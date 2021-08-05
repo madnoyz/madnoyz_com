@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}
+    III
+<!--<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">-->
+{% endblock %}
+{% block sub_content %}
+    <table>
+    <th>
+        <tr style="color: cornflowerblue">
+            <td>No.</td>
+            <td>Item Name</td>
+            <td>Description</td>
+            <td>Qty</td>
+        </tr>
+    </th>
+    {% if len > 0 %}
+        {% for i in Items %}
+        <tr>
+            <td>{{ i }}</td>
+            <td>{{ Items['itemName'] }}</td>
+            <td>{{ Items['description'] }}</td>
+            <td>{{ Items['quantity'] }}</td>
+        {% endfor %}
+    {% endif %}
+    </tr>
+    </table>
+{% endblock %}

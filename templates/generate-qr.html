@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}
+    QR Code Generator
+{% endblock %}
+{% block sub_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-2">
+            <a href="/qr-code-project"><button type="button" class="btn btn-default btn-arrow-left">back</button></a>
+        </div>
+    </div>
+    <div class="row">
+        <h1>Generate QR Code</h1>
+        <br />
+        <form class="form-horizontal" method="POST">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <ul class=flashes>
+                {% for message in messages %}
+                  <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+            <div class="form-group">
+                <label class="control-label col-sm-2">Enter PO#</label>
+                <div class="col-sm-5">
+                    <input type="text" name="order_number" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="Submit">Enter</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    {% if qrcode_image %}
+        <img src="{{ url_for('static', filename=qrcode_image) }}" />
+    {% endif %}
+</div>
+{% endblock %}
